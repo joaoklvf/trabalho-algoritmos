@@ -1,6 +1,6 @@
 .bar {
     border: 0.05vw solid black;
-    width: 0.6vw;
+    width: 100%;
     margin: 0.1vw;
     background-color: #fd0081;
 }

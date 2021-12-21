@@ -39,6 +39,10 @@
   <div class="container">
     <div class="mb-3">
       <button type="button" class="btn btn-outline-primary mb-3" onClick="SelectionSort()">Selection Sorter</button>
+      <button type="button" class="btn btn-outline-primary mb-3" onClick="InsertionSort()">InsertionSort</button>
+      <button type="button" class="btn btn-outline-primary mb-3" onClick="MergeSort()">MergeSort</button>
+      <button type="button" class="btn btn-outline-primary mb-3" onClick="QuickSort()">QuickSort</button>
+      <button type="button" class="btn btn-outline-primary mb-3" onClick="HeapSort()">HeapSort</button>
       <div class="input-group mb-3">
         <span class="input-group-text" id="basic-addon1">Número Trocas</span>
         <input id="numeroTrocas" type="text" class="form-control" disabled>
@@ -50,7 +54,7 @@
     </div>
     <div>
       <label id="customRangeValue" for="customRange" class="form-label">Tamanho do array: 10</label>
-      <input type="range" class="form-range" id="customRange" min="0" max="100" value="10">      
+      <input type="range" class="form-range" id="customRange" min="10" max="100" value="10">      
     </div>
     <div id="espacoBarras" class="d-flex flex-row bd-highlight mb-3">
     </div>

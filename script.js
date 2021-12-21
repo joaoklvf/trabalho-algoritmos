@@ -1,27 +1,30 @@
 let bars = [];
+const corPadrao = "#fd0081", corMudando = "#431f91", corFinalizada = "#8ef511", corSelecionada = "yellow";
 
-async function setup() {
+async function inicializar() {
     let size = parseInt($("#customRange").val());
     if (bars.length != size) {
-        generateBars(size);
+        definirBarras(size);
     }
 }
 
-$(() => setup());
+$(() => inicializar());
 
-$("#customRange").on("input", setup);
+$("#customRange").on("input", inicializar);
 
 function reset() {
     location.reload();
 }
 
-function Finished_Sorting() {
-    $(".bar").each(function() {
-        $(this).css("background-color", "green");
-    });
+function pintarBarrasFinalizadas() {
+    $(".bar").css("background-color", "green");
 }
 
-function generateBars(n = -1) {
+function pintarBarrasPadrao() {
+    $(".bar").css("background-color", "");
+}
+
+function definirBarras(n = -1) {
     bars = [];
     n = n < 0 ? Math.random() * 20 : n;
     for (let i = 0; i < n; i++) {
@@ -29,6 +32,7 @@ function generateBars(n = -1) {
         bars.push(`<div class="bar" id="${i}" name="${num}" style="height:${num}%"></div>`);
     }
     $("#espacoBarras").html(bars);
+    $("#customRangeValue").html(`Tamanho do array: ${n}`)
 }
 
 function Sleep(ms) {
@@ -40,22 +44,25 @@ function MapRange(value, in_min, in_max, out_min, out_max) {
 }
 
 async function SelectionSort() {
-    let delay = $("#rangeVelocidade").val();
-
+    let delay = 1;
     let container = $("#espacoBarras");
     for (let i = 0; i < bars.length; i++) {
-        let mn_ind = i;    
-        $(`#${$(bars[i]).attr("name")}`).css("background-color", "blue");
+        let mn_ind = i;
+        let barraSelecionada = $(bars[i]).attr("id");
+        $(`#${barraSelecionada}`).css("background-color", corSelecionada);
+
         for (let j = i + 1; j < bars.length; j++) {
-            $(`#${$(bars[j]).attr("name")}`).css("background-color", "yellow");
+            let barraPosterior = $(bars[j]).attr("id");
+            $(`#${barraPosterior}`).css("background-color", corMudando);
             let a = parseInt($(bars[mn_ind]).attr("name"));
             let b = parseInt($(bars[j]).attr("name"));
             if (a > b) mn_ind = j;
             await Sleep(delay / 5.0);
-            $(`#${$(bars[j]).attr("name")}`).css("background-color", "#fd0081");
+            $(`#${barraPosterior}`).css("background-color", corPadrao);
         }
 
-        $(`#${$(bars[mn_ind]).attr("name")}`).css("background-color", "blue");
+        let barraPosterior = $(bars[mn_ind]).attr("id");
+        $(`#${barraPosterior}`).css("background-color", corSelecionada);
         await Sleep(2 * delay / 5.0);
 
         let tmp = bars[mn_ind];
@@ -64,44 +71,43 @@ async function SelectionSort() {
 
         container.html(bars);
         await Sleep(2 * delay / 5.0);
-        $(`#${$(bars[i]).attr("name")}`).css("background-color", "#fd0081");
-        $(`#${$(bars[mn_ind]).attr("name")}`).css("background-color", "#fd0081");
+        $(`#${barraSelecionada}`).css("background-color", corPadrao);
+        $(`#${barraPosterior}`).css("background-color", corPadrao);
     }
-    Finished_Sorting();
+    pintarBarrasFinalizadas();
 }
 
 async function InsertionSort() {
-    let delay = Disable_The_Input();
-    let container = document.getElementById("container");
+    let delay = 1;
+    let container = $("#espacoBarras");
     for (let i = 1; i < bars.length; i++) {
         let j = i - 1;
-        let key = bars[i];
-        let curr_id = key.split('id="')[1].split('"')[0];
-        let nxt_ele = bars[j].split('id="')[1].split('"')[0];
-        document.getElementById(curr_id).style.backgroundColor = selected;
-        let sound = MapRange(document.getElementById(curr_id).style.height.split('%')[0], 2, 100, 500, 1000);
-        beep(100, sound, delay)
-        while (j >= 0 && parseInt(bars[j].split(/[:%]/)[1]) > parseInt(key.split(/[:%]/)[1])) {
-            document.getElementById(nxt_ele).style.backgroundColor = def;
-            nxt_ele = bars[j].split('id="')[1].split('"')[0];
-            document.getElementById(nxt_ele).style.backgroundColor = chng;
+        let barraChave = $(bars[i]);
+        let barraSelecionada = $(bars[i]).attr("id");
+        $(`#${barraSelecionada}`).css("background-color", corSelecionada);
+        let barraPosterior = $(bars[j]).attr("id");
+        $(`#${barraPosterior}`).css("background-color", corMudando);
+        while (j >= 0 && parseInt($(bars[j]).attr("name")) > parseInt(barraChave.attr("name"))) {
+            $(`#${barraPosterior}`).css("background-color", corPadrao);
+            barraPosterior = $(bars[j]).attr("id");
+            $(`#${barraPosterior}`).css("background-color", corMudando);
             await Sleep(delay);
             bars[j + 1] = bars[j];
             j--;
         }
 
-        bars[j + 1] = key;
-        container.innerHTML = bars.join('');
-        document.getElementById(curr_id).style.backgroundColor = selected;
-        document.getElementById(nxt_ele).style.backgroundColor = chng;
+        bars[j + 1] = barraChave;
+        container.html(bars);
+        $(`#${barraSelecionada}`).css("background-color", corSelecionada);
+        $(`#${barraPosterior}`).css("background-color", corMudando);
         await Sleep(delay * 3.0 / 5);
-        document.getElementById(curr_id).style.backgroundColor = def;
-        document.getElementById(nxt_ele).style.backgroundColor = def;
+        $(`#${barraSelecionada}`).css("background-color", corPadrao);
+        $(`#${barraPosterior}`).css("background-color", corPadrao);
     }
-    Finished_Sorting();
+    pintarBarrasFinalizadas();
 }
 
-function Slide_down(l, r) {
+function rebaixarBarras(l, r) {
     let temp = bars[r];
     for (let i = r - 1; i >= l; i--) {
         bars[i + 1] = bars[i];
@@ -114,31 +120,26 @@ async function merge(l, m, r, d) {
     let y = l;
     let i = l;
     let j = m + 1;
-
+    let container = $("#espacoBarras");
     while (i < j && j <= r) {
-        let curr_id = bars[j].split('id="')[1].split('"')[0];
-        let nxt_ele = bars[i].split('id="')[1].split('"')[0];
-        document.getElementById(curr_id).style.backgroundColor = selected;
-        document.getElementById(nxt_ele).style.backgroundColor = chng;
-        let a = parseInt(bars[j].split(/[:%]/)[1]);
-        let b = parseInt(bars[i].split(/[:%]/)[1]);
+        let barraSelecionada = $(bars[i]).attr("id");
+        $(`#${barraSelecionada}`).css("background-color", corSelecionada);
+        let barraPosterior = $(bars[j]).attr("id");
+        $(`#${barraPosterior}`).css("background-color", corMudando);
+        let a = parseInt($(bars[j]).attr("name"));
+        let b = parseInt($(bars[i]).attr("name"));
 
         if (a > b) i++;
         else {
-            Slide_down(i, j);
+            rebaixarBarras(i, j);
             i++; j++;
         }
         await Sleep(d / 2.0);
-        container.innerHTML = bars.join('');
-        document.getElementById(curr_id).style.backgroundColor = selected;
-        document.getElementById(nxt_ele).style.backgroundColor = chng;
-        let sound = MapRange(document.getElementById(curr_id).style.height.split('%')[0], 2, 100, 500, 1000);
-        beep(100, sound, d)
-        await Sleep(d / 2.0);
-        document.getElementById(curr_id).style.backgroundColor = def;
-        document.getElementById(nxt_ele).style.backgroundColor = def;
-        sound = MapRange(document.getElementById(curr_id).style.height.split('%')[0], 2, 100, 500, 1000);
-        beep(100, sound, d)
+        container.html(bars);
+        $(`#${barraSelecionada}`).css("background-color", corSelecionada);
+        $(`#${barraPosterior}`).css("background-color", corMudando);
+        $(`#${barraSelecionada}`).css("background-color", corPadrao);;
+        $(`#${barraPosterior}`).css("background-color", corPadrao);
     }
 }
 
@@ -154,40 +155,39 @@ async function mergeSort(l, r, d) {
 
 
 async function MergeSort() {
-    let delay = Disable_The_Input();
+    let delay = 1;
     await mergeSort(0, bars.length - 1, delay);
-    Finished_Sorting();
+    pintarBarrasFinalizadas();
 }
 
 async function Partition(l, r, d) {
     let i = l - 1;
     let j = l;
-    let id = bars[r].split('id="')[1].split('"')[0];
-    document.getElementById(id).style.backgroundColor = selected;
+    let container = $("#espacoBarras");
+    let barraChave = $(bars[r]);
+    barraChave.css("background-color", corSelecionada);
     for (j = l; j < r; j++) {
-        let a = parseInt(bars[j].split(/[:%]/)[1]);
-        let b = parseInt(bars[r].split(/[:%]/)[1]);
+        let a = parseInt($(bars[j]).attr("name"));
+        let b = parseInt($(bars[r]).attr("name"));
         if (a < b) {
             i++;
-            let curr_id = bars[i].split('id="')[1].split('"')[0];
-            let nxt_ele = bars[j].split('id="')[1].split('"')[0];
-            document.getElementById(curr_id).style.backgroundColor = chng;
-            document.getElementById(nxt_ele).style.backgroundColor = chng;
+            let barraSelecionada = $(bars[i]).attr("id")
+            let barraPosterior = $(bars[j]).attr("id");
+            $(`#${barraSelecionada}`).css("background-color", corMudando);
+            $(`#${barraPosterior}`).css("background-color", corMudando);
 
             let temp = bars[i];
             bars[i] = bars[j];
             bars[j] = temp;
 
             await Sleep(d / 3.0);
-            container.innerHTML = bars.join('');
-            document.getElementById(curr_id).style.backgroundColor = chng;
-            document.getElementById(nxt_ele).style.backgroundColor = chng;
-            document.getElementById(id).style.backgroundColor = selected;
-            let sound = MapRange(document.getElementById(curr_id).style.height.split('%')[0], 2, 100, 500, 1000);
-            beep(100, sound, d)
+            container.html(bars);
+            $(`#${barraSelecionada}`).css("background-color", corMudando);
+            $(`#${barraPosterior}`).css("background-color", corMudando);
+            barraChave.css("background-color", corSelecionada);
             await Sleep(d / 3.0)
-            document.getElementById(curr_id).style.backgroundColor = def;
-            document.getElementById(nxt_ele).style.backgroundColor = def;
+            $(`#${barraSelecionada}`).css("background-color", corPadrao);;
+            $(`#${barraPosterior}`).css("background-color", corPadrao);
         }
     }
 
@@ -195,10 +195,10 @@ async function Partition(l, r, d) {
     bars[i + 1] = bars[r];
     bars[r] = temp;
 
-    container.innerHTML = bars.join(' ');
-    document.getElementById(id).style.backgroundColor = selected;
+    container.html(bars);;
+    barraChave.css("background-color", corSelecionada);
     await Sleep(d / 3.0);
-    document.getElementById(id).style.backgroundColor = def;
+    barraChave.css("background-color", corPadrao);
     return i + 1;
 }
 
@@ -212,62 +212,66 @@ async function quickSort(l, r, d) {
 
 
 async function QuickSort() {
-    let delay = Disable_The_Input();
+    let delay = 1;
     await quickSort(0, bars.length - 1, delay);
-    Finished_Sorting();
+    pintarBarrasFinalizadas();
 }
 
 async function Heapfiy(n, i, d) {
+    pintarBarrasPadrao();
     let largest = i;
-    let l = 2 * i + 1; // lft
+    let l = 2 * i + 1;
     let r = 2 * i + 2; // rgt
-    let curr_id = bars[i].split('id="')[1].split('"')[0];
-    let nxt_ele;
-    let id3;
-
-    document.getElementById(curr_id).style.backgroundColor = selected;
+    let barraSelecionada = $(bars[i]);
+    let barraPosterior;
+    let barraTres;
+    let container = $("#espacoBarras");
+    barraSelecionada.css("background-color", corSelecionada);
     if (r < n) {
-        id3 = bars[r].split('id="')[1].split('"')[0];
-        document.getElementById(id3).style.backgroundColor = chng;
+        barraTres = $(bars[r]);
+        barraTres.css("background-color", corMudando);
     }
     if (l < n) {
-        nxt_ele = bars[l].split('id="')[1].split('"')[0];
-        document.getElementById(nxt_ele).style.backgroundColor = chng;
+        barraPosterior = $(bars[l]);
+        barraPosterior.css("background-color", corMudando);
     }
     await Sleep(d / 3.0)
-    if (l < n && parseInt(bars[l].split(/[:%]/)[1]) > parseInt(bars[largest].split(/[:%]/)[1]))
+    if (l < n && parseInt($(bars[l]).attr("name")) > parseInt($(bars[largest]).attr("name")))
         largest = l;
-    if (r < n && parseInt(bars[r].split(/[:%]/)[1]) > parseInt(bars[largest].split(/[:%]/)[1]))
+    if (r < n && parseInt($(bars[r]).attr("name")) > parseInt($(bars[largest]).attr("name")))
         largest = r;
 
     if (largest != i) {
-        let t = bars[i]; bars[i] = bars[largest]; bars[largest] = t;
-        container.innerHTML = bars.join(' ');
-        document.getElementById(curr_id).style.backgroundColor = selected;
-        let sound = MapRange(document.getElementById(curr_id).style.height.split('%')[0], 2, 100, 500, 1000);
-        beep(100, sound, d)
-        if (r < n) document.getElementById(id3).style.backgroundColor = chng;
-        if (l < n) document.getElementById(nxt_ele).style.backgroundColor = chng;
-        await Sleep(d / 3.0)
-        container.innerHTML = bars.join(' ');
+        let t = $(bars[i]);
+        bars[i] = $(bars[largest]);
+        bars[largest] = t;
+        container.html(bars);;
+        barraSelecionada.css("background-color", corSelecionada);
+        if (r < n) barraTres.css("background-color", corMudando);
+        if (l < n) barraPosterior.css("background-color", corMudando);
+        await Sleep(d / 3.0);    
+        container.html(bars);
         await Heapfiy(n, largest, d);
     }
-    container.innerHTML = bars.join(' ');
+    container.html(bars);;
 }
 
 async function HeapSort() {
-    let delay = Disable_The_Input();
+    let delay = 1;
     let n = bars.length;
-    for (let i = n / 2 - 1; i >= 0; i--) // Build the heap
-        await Heapfiy(n, i, delay);
+    let container = $("#espacoBarras");
 
-    for (let i = n - 1; i >= 0; i--) {
+    for (let i = Math.floor(n / 2); i >= 0; i--) {
+        await Heapfiy(n, i, delay);
+    }
+
+    for (let i = bars.length - 1; i > 0; i--) {
         let t = bars[0]; // Swaping
         bars[0] = bars[i];
         bars[i] = t;
 
-        container.innerHTML = bars.join(' ');
+        container.html(bars);;
         await Heapfiy(i, 0, delay);
     }
-    Finished_Sorting();
+    pintarBarrasFinalizadas();
 } 
