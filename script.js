@@ -12,6 +12,7 @@ $(() => inicializar());
 
 $("#customRange").on("input", inicializar);
 
+
 function reset() {
     location.reload();
 }
@@ -44,7 +45,7 @@ function MapRange(value, in_min, in_max, out_min, out_max) {
 }
 
 async function SelectionSort() {
-    let delay = 1;
+    let delay = 200;
     let container = $("#espacoBarras");
     for (let i = 0; i < bars.length; i++) {
         let mn_ind = i;
@@ -78,7 +79,7 @@ async function SelectionSort() {
 }
 
 async function InsertionSort() {
-    let delay = 1;
+    let delay = 200;
     let container = $("#espacoBarras");
     for (let i = 1; i < bars.length; i++) {
         let j = i - 1;
@@ -117,7 +118,6 @@ function rebaixarBarras(l, r) {
 
 
 async function merge(l, m, r, d) {
-    let y = l;
     let i = l;
     let j = m + 1;
     let container = $("#espacoBarras");
@@ -155,7 +155,7 @@ async function mergeSort(l, r, d) {
 
 
 async function MergeSort() {
-    let delay = 1;
+    let delay = 200;
     await mergeSort(0, bars.length - 1, delay);
     pintarBarrasFinalizadas();
 }
@@ -212,66 +212,76 @@ async function quickSort(l, r, d) {
 
 
 async function QuickSort() {
-    let delay = 1;
+    let delay = 200;
     await quickSort(0, bars.length - 1, delay);
     pintarBarrasFinalizadas();
 }
 
-async function Heapfiy(n, i, d) {
+async function heapConstrutor(qtdCasas, posicao) {
     pintarBarrasPadrao();
-    let largest = i;
-    let l = 2 * i + 1;
-    let r = 2 * i + 2; // rgt
-    let barraSelecionada = $(bars[i]);
+    let paiAnalisado = posicao;
+    let esquerda = 2 * posicao + 1; //pois a casa um vale 0
+    let direita = 2 * posicao + 2;
+    let barraSelecionada = $(bars[posicao]);
     let barraPosterior;
     let barraTres;
     let container = $("#espacoBarras");
     barraSelecionada.css("background-color", corSelecionada);
-    if (r < n) {
-        barraTres = $(bars[r]);
+    if (direita < qtdCasas) {
+        barraTres = $(bars[direita]);
         barraTres.css("background-color", corMudando);
     }
-    if (l < n) {
-        barraPosterior = $(bars[l]);
+    if (esquerda < qtdCasas) {
+        barraPosterior = $(bars[esquerda]);
         barraPosterior.css("background-color", corMudando);
     }
-    await Sleep(d / 3.0)
-    if (l < n && parseInt($(bars[l]).attr("name")) > parseInt($(bars[largest]).attr("name")))
-        largest = l;
-    if (r < n && parseInt($(bars[r]).attr("name")) > parseInt($(bars[largest]).attr("name")))
-        largest = r;
+    await Sleep(68);
+    //realiza troca
+    if (esquerda < qtdCasas && parseInt($(bars[esquerda]).attr("name")) > parseInt($(bars[paiAnalisado]).attr("name")))
+        paiAnalisado = esquerda;
+    if (direita < qtdCasas && parseInt($(bars[direita]).attr("name")) > parseInt($(bars[paiAnalisado]).attr("name")))
+        paiAnalisado = direita;
 
-    if (largest != i) {
-        let t = $(bars[i]);
-        bars[i] = $(bars[largest]);
-        bars[largest] = t;
+    if (paiAnalisado != posicao) {
+        let t = $(bars[posicao]);
+        bars[posicao] = $(bars[paiAnalisado]);
+        bars[paiAnalisado] = t;
         container.html(bars);;
         barraSelecionada.css("background-color", corSelecionada);
-        if (r < n) barraTres.css("background-color", corMudando);
-        if (l < n) barraPosterior.css("background-color", corMudando);
-        await Sleep(d / 3.0);    
+        if (direita < qtdCasas) barraTres.css("background-color", corMudando);
+        if (esquerda < qtdCasas) barraPosterior.css("background-color", corMudando);
+        await Sleep(68);    
         container.html(bars);
-        await Heapfiy(n, largest, d);
+        await heapConstrutor(qtdCasas, paiAnalisado);
     }
     container.html(bars);;
 }
 
 async function HeapSort() {
-    let delay = 1;
-    let n = bars.length;
+    let delay = 200;
+    let n = bars.length; //tamanho do vetor
     let container = $("#espacoBarras");
-
+    //Math.floor -> retorna menor numero inteiro
     for (let i = Math.floor(n / 2); i >= 0; i--) {
-        await Heapfiy(n, i, delay);
+        await heapConstrutor(n, i, delay);
     }
 
     for (let i = bars.length - 1; i > 0; i--) {
-        let t = bars[0]; // Swaping
+        let t = bars[0];
         bars[0] = bars[i];
         bars[i] = t;
 
         container.html(bars);;
-        await Heapfiy(i, 0, delay);
+        await heapConstrutor(i, 0, delay);
     }
     pintarBarrasFinalizadas();
 } 
+
+
+/*
+m = último valor
+o índice 1 é a raiz da árvore;
+o pai de qualquer índice  f  é  f/2  (é claro que 1 não tem pai);
+o filho esquerdo de um índice  p  é  2p  (esse filho só existe se 2p ≤ m );
+o filho direito de  p  é  2p+1  (esse filho só existe se 2p+1 ≤ m ).
+*/
