@@ -1,305 +1,287 @@
 let bars = [];
-let vector = [];
+const corPadrao = "#fd0081", corMudando = "#431f91", corFinalizada = "#8ef511", corSelecionada = "yellow";
 
-$(function () {
-    defineBarras();
-});
-
-$("#customRange").on("input", defineBarras);
-
-async function defineBarras() {
-    let valorInput = $("#customRange").val();
-    let barras = parseInt(valorInput < 10 ? "10" : valorInput);
-    if (bars.length == parseInt(barras)) return;
-    $("#customRangeValue").text(`Tamanho do array: ${barras}`);
-    adicionaBarras(parseInt(barras));
+async function inicializar() {
+    let size = parseInt($("#customRange").val());
+    if (bars.length != size) {
+        definirBarras(size);
+    }
 }
 
-async function adicionaBarras(barras) {
+$(() => inicializar());
+
+$("#customRange").on("input", inicializar);
+
+
+function reset() {
+    location.reload();
+}
+
+function pintarBarrasFinalizadas() {
+    $(".bar").css("background-color", "green");
+}
+
+function pintarBarrasPadrao() {
+    $(".bar").css("background-color", "");
+}
+
+function definirBarras(n = -1) {
     bars = [];
-    vector = [];
-    for (var i = 0; i < barras; i++) {
+    n = n < 0 ? Math.random() * 20 : n;
+    for (let i = 0; i < n; i++) {
         let num = Math.floor(2 + Math.random() * 98);
-        bars.push(`<div class="bar" style="height: ${num}%" id="bar-${i}"></div>`);
-        vector.push(num);
+        bars.push(`<div class="bar" id="${i}" name="${num}" style="height:${num}%"></div>`);
     }
     $("#espacoBarras").html(bars);
+    $("#customRangeValue").html(`Tamanho do array: ${n}`)
 }
 
-function geraVetor() {
-    let arrayDez = [];
-    let arrayCem = [];
-    let arrayMil = [];
-    for (let i = 0; i < 10; i++) {
-        arrayDez.push(Math.floor(2 + Math.random() * 98));
-    }
-    for (let i = 0; i < 100; i++) {
-        arrayCem.push(Math.floor(2 + Math.random() * 98));
-    }
-    for (let i = 0; i < 1000; i++) {
-        arrayMil.push(Math.floor(2 + Math.random() * 98));
-    }
-    return { arrayDez, arrayCem, arrayMil };
+function Sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-
-
-//Insertion Sort
-
-insertionSort = (array, pos) => {
-    let vetor = [...array];
-    let numeroTrocas = 0;
-    let numeroComparacoes = 0;
-    let tempoExecucao = 0;
-    for (outer = 1; outer < vetor.length; outer++) {
-
-        for (inner = 0; inner < outer; inner++) {
-
-            if (vetor[outer] < vetor[inner]) {
-
-                numeroTrocas++;
-                const [element] = vetor.splice(outer, 1);
-                vetor.splice(inner, 0, element);
-            }
-            numeroComparacoes++;
-        }
-    }
-    $(`#numeroTrocasInsertion${pos}`).val(numeroTrocas);
-    $(`#numeroComparaçõesInsertion${pos}`).val(numeroComparacoes);
+function MapRange(value, in_min, in_max, out_min, out_max) {
+    return (value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
+async function SelectionSort() {
+    let delay = 200;
+    let container = $("#espacoBarras");
+    for (let i = 0; i < bars.length; i++) {
+        let mn_ind = i;
+        let barraSelecionada = $(bars[i]).attr("id");
+        $(`#${barraSelecionada}`).css("background-color", corSelecionada);
 
-
-//Selection Sort
-
-selectionSort = (array, pos) => {
-    let vetor = [...array];
-    let n = vetor.length;
-    let numeroTrocas = 0;
-    let numeroComparacoes = 0;
-    let tempoExecucao = 0;
-   //console.log(vetor)
-
-    for (let i = 0; i < n; i++) {
-        let min = i;
-        
-        
-        for (let j = i + 1; j < n; j++) {
-
-            if (vetor[j] < vetor[min]) {
-                min = j;        
-            }
-            numeroComparacoes++
-        }
-        if (min != i) {
-          //  console.log(vetor)
-            let tmp = vetor[i];
-            vetor[i] = vetor[min];
-            vetor[min] = tmp;
-            numeroTrocas++  
-           // console.log("chegou")      //    console.log(vetor)
-            
-        }
-        
-        numeroComparacoes++
-    }
-    $(`#numeroTrocasSelection${pos}`).val(numeroTrocas);
-    $(`#numeroComparaçõesSelection${pos}`).val(numeroComparacoes);
-   
-    return vetor;
-}
-
-
-
-//Merge Sort
-
-mergeSort = (array, pos) => {
-    let vetor = [...array];
-    let numeroTrocas = 0;
-    let numeroComparacoes = 0;
-
-    if (vetor.length < 2) {
-        return vetor
-    }
-    numeroComparacoes++
-    const mid = Math.floor(vetor.length / 2)
-    const smallOne = vetor.slice(0, mid)
-    const smallTwo = vetor.slice(mid)
-
-    return sort(mergeSort(smallOne), mergeSort(smallTwo), numeroTrocas, numeroComparacoes, pos)
-}
-
-sort = (smallOne, smallTwo, trocas, comparacoes, pos) => {
-    const sorted = []
-    while (smallOne.length && smallTwo.length) {
-        trocas++
-        if (smallOne[0] <= smallTwo[0]) {
-            sorted.push(smallOne.shift())
-
-        } else {
-            sorted.push(smallTwo.shift())
-        }
-        comparacoes += 2
-    }
-    const output = [...sorted, ...smallOne, ...smallTwo]
-
-    $(`#numeroTrocasMerge${pos}`).val(trocas);
-    $(`#numeroComparaçõesMerge${pos}`).val(comparacoes);
-    return output
-}
-
-
-
-//Heap Sort
-const buildMaxHeap = (arr) => {
-    let i = Math.floor(arr.length / 2 - 1);
-
-    while (i >= 0) {
-        heapify(arr, i, arr.length);
-        i -= 1;
-    }
-}
-
-const heapify = (heap, i, max) => {
-    let index;
-    let leftChild;
-    let rightChild;
-
-    while (i < max) {
-        index = i;
-        leftChild = 2 * i + 1;
-
-        rightChild = leftChild + 1;
-
-        if (leftChild < max && heap[leftChild] > heap[index]) {
-            index = leftChild;
+        for (let j = i + 1; j < bars.length; j++) {
+            let barraPosterior = $(bars[j]).attr("id");
+            $(`#${barraPosterior}`).css("background-color", corMudando);
+            let a = parseInt($(bars[mn_ind]).attr("name"));
+            let b = parseInt($(bars[j]).attr("name"));
+            if (a > b) mn_ind = j;
+            await Sleep(delay / 5.0);
+            $(`#${barraPosterior}`).css("background-color", corPadrao);
         }
 
-        if (rightChild < max && heap[rightChild] > heap[index]) {
-            index = rightChild;
+        let barraPosterior = $(bars[mn_ind]).attr("id");
+        $(`#${barraPosterior}`).css("background-color", corSelecionada);
+        await Sleep(2 * delay / 5.0);
+
+        let tmp = bars[mn_ind];
+        bars[mn_ind] = bars[i];
+        bars[i] = tmp;
+
+        container.html(bars);
+        await Sleep(2 * delay / 5.0);
+        $(`#${barraSelecionada}`).css("background-color", corPadrao);
+        $(`#${barraPosterior}`).css("background-color", corPadrao);
+    }
+    pintarBarrasFinalizadas();
+}
+
+async function InsertionSort() {
+    let delay = 200;
+    let container = $("#espacoBarras");
+    for (let i = 1; i < bars.length; i++) {
+        let j = i - 1;
+        let barraChave = $(bars[i]);
+        let barraSelecionada = $(bars[i]).attr("id");
+        $(`#${barraSelecionada}`).css("background-color", corSelecionada);
+        let barraPosterior = $(bars[j]).attr("id");
+        $(`#${barraPosterior}`).css("background-color", corMudando);
+        while (j >= 0 && parseInt($(bars[j]).attr("name")) > parseInt(barraChave.attr("name"))) {
+            $(`#${barraPosterior}`).css("background-color", corPadrao);
+            barraPosterior = $(bars[j]).attr("id");
+            $(`#${barraPosterior}`).css("background-color", corMudando);
+            await Sleep(delay);
+            bars[j + 1] = bars[j];
+            j--;
         }
 
-        if (index === i) {
-            return;
+        bars[j + 1] = barraChave;
+        container.html(bars);
+        $(`#${barraSelecionada}`).css("background-color", corSelecionada);
+        $(`#${barraPosterior}`).css("background-color", corMudando);
+        await Sleep(delay * 3.0 / 5);
+        $(`#${barraSelecionada}`).css("background-color", corPadrao);
+        $(`#${barraPosterior}`).css("background-color", corPadrao);
+    }
+    pintarBarrasFinalizadas();
+}
+
+function rebaixarBarras(l, r) {
+    let temp = bars[r];
+    for (let i = r - 1; i >= l; i--) {
+        bars[i + 1] = bars[i];
+    }
+    bars[l] = temp;
+}
+
+
+async function merge(l, m, r, d) {
+    let i = l;
+    let j = m + 1;
+    let container = $("#espacoBarras");
+    while (i < j && j <= r) {
+        let barraSelecionada = $(bars[i]).attr("id");
+        $(`#${barraSelecionada}`).css("background-color", corSelecionada);
+        let barraPosterior = $(bars[j]).attr("id");
+        $(`#${barraPosterior}`).css("background-color", corMudando);
+        let a = parseInt($(bars[j]).attr("name"));
+        let b = parseInt($(bars[i]).attr("name"));
+
+        if (a > b) i++;
+        else {
+            rebaixarBarras(i, j);
+            i++; j++;
         }
-
-        swap(heap, i, index);
-
-        i = index;
+        await Sleep(d / 2.0);
+        container.html(bars);
+        $(`#${barraSelecionada}`).css("background-color", corSelecionada);
+        $(`#${barraPosterior}`).css("background-color", corMudando);
+        $(`#${barraSelecionada}`).css("background-color", corPadrao);;
+        $(`#${barraPosterior}`).css("background-color", corPadrao);
     }
 }
 
-const swap = (arr, firstItemIndex, lastItemIndex) => {
-    
-    const temp = arr[firstItemIndex];
 
-    arr[firstItemIndex] = arr[lastItemIndex];
-    arr[lastItemIndex] = temp;
-}
-
-const heapSort = (array, pos) => {
-    let vetor = [...array];
-    let numeroComparacoes = 0
-    let numeroTrocas = 0
-
-    buildMaxHeap(vetor);
-    numeroComparacoes++
-
-    lastElement = vetor.length - 1;
-
-    while (lastElement > 0) {
-        numeroComparacoes++
-        swap(vetor, 0, lastElement);
-        numeroTrocas++
-        heapify(vetor, 0, lastElement);
-        numeroTrocas++
-        numeroComparacoes += 4
-        lastElement -= 1;
+async function mergeSort(l, r, d) {
+    if (l < r) {
+        let m = parseInt(l + (r - l) / 2);
+        await mergeSort(l, m, d);
+        await mergeSort(m + 1, r, d);
+        await merge(l, m, r, d);
     }
-    $(`#numeroTrocasHeap${pos}`).val(numeroTrocas);
-    $(`#numeroComparaçõesHeap${pos}`).val(numeroComparacoes);
-
-    return vetor;
 }
 
 
+async function MergeSort() {
+    let delay = 200;
+    await mergeSort(0, bars.length - 1, delay);
+    pintarBarrasFinalizadas();
+}
 
-//Quick Sort
-quickSort = (array, pos) => {
-    let vetor = [...array];
-    let numeroTrocas = 0
-    let numeroComparacoes = 0
+async function Partition(l, r, d) {
+    let i = l - 1;
+    let j = l;
+    let container = $("#espacoBarras");
+    let barraChave = $(bars[r]);
+    barraChave.css("background-color", corSelecionada);
+    for (j = l; j < r; j++) {
+        let a = parseInt($(bars[j]).attr("name"));
+        let b = parseInt($(bars[r]).attr("name"));
+        if (a < b) {
+            i++;
+            let barraSelecionada = $(bars[i]).attr("id")
+            let barraPosterior = $(bars[j]).attr("id");
+            $(`#${barraSelecionada}`).css("background-color", corMudando);
+            $(`#${barraPosterior}`).css("background-color", corMudando);
 
-    if (vetor.length < 2) {
-      return vetor
+            let temp = bars[i];
+            bars[i] = bars[j];
+            bars[j] = temp;
+
+            await Sleep(d / 3.0);
+            container.html(bars);
+            $(`#${barraSelecionada}`).css("background-color", corMudando);
+            $(`#${barraPosterior}`).css("background-color", corMudando);
+            barraChave.css("background-color", corSelecionada);
+            await Sleep(d / 3.0)
+            $(`#${barraSelecionada}`).css("background-color", corPadrao);;
+            $(`#${barraPosterior}`).css("background-color", corPadrao);
+        }
     }
-    numeroComparacoes++
-    const chosenIndex = vetor.length - 1
-    const chosen = vetor[chosenIndex]
-    const a = []
-    const b = []
-    for (let i = 0; i < chosenIndex; i++) {
-        numeroTrocas++
-      const temp = vetor[i]
-      temp < chosen ? a.push(temp) : b.push(temp)
-      numeroComparacoes++
+
+    let temp = bars[i + 1];
+    bars[i + 1] = bars[r];
+    bars[r] = temp;
+
+    container.html(bars);;
+    barraChave.css("background-color", corSelecionada);
+    await Sleep(d / 3.0);
+    barraChave.css("background-color", corPadrao);
+    return i + 1;
+}
+
+async function quickSort(l, r, d) {
+    if (l < r) {
+        let p = await Partition(l, r, d);
+        await quickSort(l, p - 1, d);
+        await quickSort(p + 1, r, d);
     }
-  
-    const output = [...quickSort(a), chosen, ...quickSort(b)]
-    
-    $(`#numeroTrocasQuick${pos}`).val(numeroTrocas);
-    $(`#numeroComparaçõesQuick${pos}`).val(numeroComparacoes);
-
-    return output
-  }
-
-function Sort() {
-    let vector = geraVetor()
-    const arrayCem = vector.arrayCem
-    const arrayDez = vector.arrayDez
-    const arrayMil = vector.arrayMil
-    
-    $('#tempoExecucaoInsertion1').val(tempoDecorrido(insertionSort, arrayDez, 1));
-    $('#tempoExecucaoInsertion2').val(tempoDecorrido(insertionSort, arrayCem, 2));
-    $('#tempoExecucaoInsertion3').val(tempoDecorrido(insertionSort, arrayMil, 3));
-
-    
-    $('#tempoExecucaoSelection1').val(tempoDecorrido(selectionSort, arrayDez, 1));
-    $('#tempoExecucaoSelection2').val(tempoDecorrido(selectionSort, arrayCem, 2));
-    $('#tempoExecucaoSelection3').val(tempoDecorrido(selectionSort, arrayMil, 3));
-
-    $('#tempoExecucaoMerge1').val(tempoDecorrido(mergeSort, arrayDez, 1));
-    $('#tempoExecucaoMerge2').val(tempoDecorrido(mergeSort, arrayCem, 2));
-    $('#tempoExecucaoMerge3').val(tempoDecorrido(mergeSort, arrayMil, 3));
-
-    $('#tempoExecucaoHeap1').val(tempoDecorrido(heapSort, arrayDez, 1));
-    $('#tempoExecucaoHeap2').val(tempoDecorrido(heapSort, arrayCem, 2));
-    $('#tempoExecucaoHeap3').val(tempoDecorrido(heapSort, arrayMil, 3));
-
-    $('#tempoExecucaoQuick1').val(tempoDecorrido(quickSort, arrayDez, 1));
-    $('#tempoExecucaoQuick2').val(tempoDecorrido(quickSort, arrayCem, 2));
-    $('#tempoExecucaoQuick3').val(tempoDecorrido(quickSort, arrayMil, 3));
-
-
 }
 
-function tempoDecorrido(funcao) {
-    // pega os argumentos a serem repassados
-    var args = Array.prototype.slice.call(arguments, 1);
 
-    // logo antes da execução
-    var inicio = performance.now();
-
-    // executa a função passada, passando os argumentos se for o caso
-    funcao.apply(null, args);
-
-    // logo após a execução
-    return performance.now() - inicio;
+async function QuickSort() {
+    let delay = 200;
+    await quickSort(0, bars.length - 1, delay);
+    pintarBarrasFinalizadas();
 }
 
-// Faz um loop de x a x+9
-function minhaFuncao(x) {
-    for(var i=x; i<x+10; i++) console.log(i);
+async function heapConstrutor(qtdCasas, posicao) {
+    pintarBarrasPadrao();
+    let paiAnalisado = posicao;
+    let esquerda = 2 * posicao + 1; //pois a casa um vale 0
+    let direita = 2 * posicao + 2;
+    let barraSelecionada = $(bars[posicao]);
+    let barraPosterior;
+    let barraTres;
+    let container = $("#espacoBarras");
+    barraSelecionada.css("background-color", corSelecionada);
+    if (direita < qtdCasas) {
+        barraTres = $(bars[direita]);
+        barraTres.css("background-color", corMudando);
+    }
+    if (esquerda < qtdCasas) {
+        barraPosterior = $(bars[esquerda]);
+        barraPosterior.css("background-color", corMudando);
+    }
+    await Sleep(68);
+    //realiza troca
+    if (esquerda < qtdCasas && parseInt($(bars[esquerda]).attr("name")) > parseInt($(bars[paiAnalisado]).attr("name")))
+        paiAnalisado = esquerda;
+    if (direita < qtdCasas && parseInt($(bars[direita]).attr("name")) > parseInt($(bars[paiAnalisado]).attr("name")))
+        paiAnalisado = direita;
+
+    if (paiAnalisado != posicao) {
+        let t = $(bars[posicao]);
+        bars[posicao] = $(bars[paiAnalisado]);
+        bars[paiAnalisado] = t;
+        container.html(bars);;
+        barraSelecionada.css("background-color", corSelecionada);
+        if (direita < qtdCasas) barraTres.css("background-color", corMudando);
+        if (esquerda < qtdCasas) barraPosterior.css("background-color", corMudando);
+        await Sleep(68);    
+        container.html(bars);
+        await heapConstrutor(qtdCasas, paiAnalisado);
+    }
+    container.html(bars);;
 }
 
-// Testando
+async function HeapSort() {
+    let delay = 200;
+    let n = bars.length; //tamanho do vetor
+    let container = $("#espacoBarras");
+    //Math.floor -> retorna menor numero inteiro
+    for (let i = Math.floor(n / 2); i >= 0; i--) {
+        await heapConstrutor(n, i, delay);
+    }
+
+    for (let i = bars.length - 1; i > 0; i--) {
+        let t = bars[0];
+        bars[0] = bars[i];
+        bars[i] = t;
+
+        container.html(bars);;
+        await heapConstrutor(i, 0, delay);
+    }
+    pintarBarrasFinalizadas();
+} 
+
+
+/*
+m = último valor
+o índice 1 é a raiz da árvore;
+o pai de qualquer índice  f  é  f/2  (é claro que 1 não tem pai);
+o filho esquerdo de um índice  p  é  2p  (esse filho só existe se 2p ≤ m );
+o filho direito de  p  é  2p+1  (esse filho só existe se 2p+1 ≤ m ).
+*/

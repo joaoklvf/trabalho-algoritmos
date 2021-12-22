@@ -1,15 +1,9 @@
 .bar {
     border: 0.05vw solid black;
-    width: 0.6vw;
+    width: 100%;
     margin: 0.1vw;
     background-color: #fd0081;
 }
 #espacoBarras{
     height: 80vh;
 }
-.section {
-    font-size: 30px;
-    color: rgb(0, 153, 255);
-    text-decoration: underline;
-    margin-bottom: 1%;
-} 

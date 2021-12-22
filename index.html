@@ -9,162 +9,63 @@
   <script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Navbar</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Features</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Pricing</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link disabled">Disabled</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 </head>
 
 <body>
   <div class="container">
     <div class="mb-3">
-      <button type="button" class="btn btn-outline-primary mb-3" onClick="Sort()">Sort</button>
-      <div class="section">Insertion Sort</div>
-
-      <div class="subtitle">Primeiro Array (10 posições):</div>
-      <div class="input-group mb-3">
-        <span class="input-group-text" id="basic-addon1">Número Trocas</span>
-        <input id="numeroTrocasInsertion1" type="text" class="form-control" disabled>
-        <span class="input-group-text" id="basic-addon1">Número de Comparações</span>
-        <input id="numeroComparaçõesInsertion1" type="text" class="form-control" disabled>
-        <span class="input-group-text" id="basic-addon1">Tempo de execução</span>
-        <input id="tempoExecucaoInsertion1" type="text" class="form-control" disabled>
+      <div class="row align-items-center mb-3">
+        <div class="col">
+          <button type="button" class="btn btn-outline-primary" onClick="SelectionSort()">Selection Sorter</button>
+          <button type="button" class="btn btn-outline-primary" onClick="InsertionSort()">InsertionSort</button>
+          <button type="button" class="btn btn-outline-primary" onClick="MergeSort()">MergeSort</button>
+          <button type="button" class="btn btn-outline-primary" onClick="QuickSort()">QuickSort</button>
+          <button type="button" class="btn btn-outline-primary" onClick="HeapSort()">HeapSort</button>
+        </div>
+        <!-- <div class="col">
+          <label id="customRangeValueDelay" for="customRangeDelay" class="form-label">Velocidade do delay: 10</label>
+          <input type="range" class="form-range" id="customRangeDelay" min="1" max="100" value="10">
+        </div> -->
       </div>
-      <div class="subtitle">Segundo Array (100 posições):</div>
       <div class="input-group mb-3">
         <span class="input-group-text" id="basic-addon1">Número Trocas</span>
-        <input id="numeroTrocasInsertion2" type="text" class="form-control" disabled>
+        <input id="numeroTrocas" type="text" class="form-control" disabled>
         <span class="input-group-text" id="basic-addon1">Número de Comparações</span>
-        <input id="numeroComparaçõesInsertion2" type="text" class="form-control" disabled>
+        <input id="numeroComparações" type="text" class="form-control" disabled>
         <span class="input-group-text" id="basic-addon1">Tempo de execução</span>
-        <input id="tempoExecucaoInsertion2" type="text" class="form-control" disabled>
-      </div>
-      <div class="subtitle">Terceiro Array (1000 posições):</div>
-      <div class="input-group mb-3">
-        <span class="input-group-text" id="basic-addon1">Número Trocas</span>
-        <input id="numeroTrocasInsertion3" type="text" class="form-control" disabled>
-        <span class="input-group-text" id="basic-addon1">Número de Comparações</span>
-        <input id="numeroComparaçõesInsertion3" type="text" class="form-control" disabled>
-        <span class="input-group-text" id="basic-addon1">Tempo de execução</span>
-        <input id="tempoExecucaoInsertion3" type="text" class="form-control" disabled>
+        <input id="tempoExecucao" type="text" class="form-control" disabled>
       </div>
     </div>
-
-    <div class="mb-3">
-      <div class="section">Selection Sort</div>
-      <div class="subtitle">Primeiro Array (10 posições):</div>
-      <div class="input-group mb-3">
-        <span class="input-group-text" id="basic-addon1">Número Trocas</span>
-        <input id="numeroTrocasSelection1" type="text" class="form-control" disabled>
-        <span class="input-group-text" id="basic-addon1">Número de Comparações</span>
-        <input id="numeroComparaçõesSelection1" type="text" class="form-control" disabled>
-        <span class="input-group-text" id="basic-addon1">Tempo de execução</span>
-        <input id="tempoExecucaoSelection1" type="text" class="form-control" disabled>
-      </div>
-      <div class="subtitle">Segundo Array (100 posições):</div>
-      <div class="input-group mb-3">
-        <span class="input-group-text" id="basic-addon1">Número Trocas</span>
-        <input id="numeroTrocasSelection2" type="text" class="form-control" disabled>
-        <span class="input-group-text" id="basic-addon1">Número de Comparações</span>
-        <input id="numeroComparaçõesSelection2" type="text" class="form-control" disabled>
-        <span class="input-group-text" id="basic-addon1">Tempo de execução</span>
-        <input id="tempoExecucaoSelection2" type="text" class="form-control" disabled>
-      </div>
-      <div class="subtitle">Terceiro Array (1000 posições):</div>
-      <div class="input-group mb-3">
-        <span class="input-group-text" id="basic-addon1">Número Trocas</span>
-        <input id="numeroTrocasSelection3" type="text" class="form-control" disabled>
-        <span class="input-group-text" id="basic-addon1">Número de Comparações</span>
-        <input id="numeroComparaçõesSelection3" type="text" class="form-control" disabled>
-        <span class="input-group-text" id="basic-addon1">Tempo de execução</span>
-        <input id="tempoExecucaoSelection3" type="text" class="form-control" disabled>
-      </div>
+    <div>
+      <label id="customRangeValue" for="customRange" class="form-label">Tamanho do array: 10</label>
+      <input type="range" class="form-range" id="customRange" min="10" max="100" value="10">
     </div>
-    <div class="mb-3">
-      <div class="section">Merge Sort</div>
-      <div class="subtitle">Primeiro Array (10 posições):</div>
-      <div class="input-group mb-3">
-        <span class="input-group-text" id="basic-addon1">Número Trocas</span>
-        <input id="numeroTrocasMerge1" type="text" class="form-control" disabled>
-        <span class="input-group-text" id="basic-addon1">Número de Comparações</span>
-        <input id="numeroComparaçõesMerge1" type="text" class="form-control" disabled>
-        <span class="input-group-text" id="basic-addon1">Tempo de execução</span>
-        <input id="tempoExecucaoMerge1" type="text" class="form-control" disabled>
-      </div>
-      <div class="subtitle">Segundo Array (100 posições):</div>
-      <div class="input-group mb-3">
-        <span class="input-group-text" id="basic-addon1">Número Trocas</span>
-        <input id="numeroTrocasMerge2" type="text" class="form-control" disabled>
-        <span class="input-group-text" id="basic-addon1">Número de Comparações</span>
-        <input id="numeroComparaçõesMerge2" type="text" class="form-control" disabled>
-        <span class="input-group-text" id="basic-addon1">Tempo de execução</span>
-        <input id="tempoExecucaoMerge2" type="text" class="form-control" disabled>
-      </div>
-      <div class="subtitle">Terceiro Array (1000 posições):</div>
-      <div class="input-group mb-3">
-        <span class="input-group-text" id="basic-addon1">Número Trocas</span>
-        <input id="numeroTrocasMerge3" type="text" class="form-control" disabled>
-        <span class="input-group-text" id="basic-addon1">Número de Comparações</span>
-        <input id="numeroComparaçõesMerge3" type="text" class="form-control" disabled>
-        <span class="input-group-text" id="basic-addon1">Tempo de execução</span>
-        <input id="tempoExecucaoMerge3" type="text" class="form-control" disabled>
-      </div>
-    </div>
-    <div class="mb-3">
-      <div class="section">Heap Sort</div>
-      <div class="subtitle">Primeiro Array (10 posições):</div>
-      <div class="input-group mb-3">
-        <span class="input-group-text" id="basic-addon1">Número Trocas</span>
-        <input id="numeroTrocasHeap1" type="text" class="form-control" disabled>
-        <span class="input-group-text" id="basic-addon1">Número de Comparações</span>
-        <input id="numeroComparaçõesHeap1" type="text" class="form-control" disabled>
-        <span class="input-group-text" id="basic-addon1">Tempo de execução</span>
-        <input id="tempoExecucaoHeap1" type="text" class="form-control" disabled>
-      </div>
-      <div class="subtitle">Segundo Array (100 posições):</div>
-      <div class="input-group mb-3">
-        <span class="input-group-text" id="basic-addon1">Número Trocas</span>
-        <input id="numeroTrocasHeap2" type="text" class="form-control" disabled>
-        <span class="input-group-text" id="basic-addon1">Número de Comparações</span>
-        <input id="numeroComparaçõesHeap2" type="text" class="form-control" disabled>
-        <span class="input-group-text" id="basic-addon1">Tempo de execução</span>
-        <input id="tempoExecucaoHeap2" type="text" class="form-control" disabled>
-      </div>
-      <div class="subtitle">Terceiro Array (1000 posições):</div>
-      <div class="input-group mb-3">
-        <span class="input-group-text" id="basic-addon1">Número Trocas</span>
-        <input id="numeroTrocasHeap3" type="text" class="form-control" disabled>
-        <span class="input-group-text" id="basic-addon1">Número de Comparações</span>
-        <input id="numeroComparaçõesHeap3" type="text" class="form-control" disabled>
-        <span class="input-group-text" id="basic-addon1">Tempo de execução</span>
-        <input id="tempoExecucaoHeap3" type="text" class="form-control" disabled>
-      </div>
-    </div>
-    <div class="mb-3">
-      <div class="section">Quick Sort</div>
-      <div class="subtitle">Primeiro Array (10 posições):</div>
-      <div class="input-group mb-3">
-        <span class="input-group-text" id="basic-addon1">Número Trocas</span>
-        <input id="numeroTrocasQuick1" type="text" class="form-control" disabled>
-        <span class="input-group-text" id="basic-addon1">Número de Comparações</span>
-        <input id="numeroComparaçõesQuick1" type="text" class="form-control" disabled>
-        <span class="input-group-text" id="basic-addon1">Tempo de execução</span>
-        <input id="tempoExecucaoQuick1" type="text" class="form-control" disabled>
-      </div>
-      <div class="subtitle">Segundo Array (100 posições):</div>
-      <div class="input-group mb-3">
-        <span class="input-group-text" id="basic-addon1">Número Trocas</span>
-        <input id="numeroTrocasQuick2" type="text" class="form-control" disabled>
-        <span class="input-group-text" id="basic-addon1">Número de Comparações</span>
-        <input id="numeroComparaçõesQuick2" type="text" class="form-control" disabled>
-        <span class="input-group-text" id="basic-addon1">Tempo de execução</span>
-        <input id="tempoExecucaoQuick2" type="text" class="form-control" disabled>
-      </div>
-      <div class="subtitle">Terceiro Array (1000 posições):</div>
-      <div class="input-group mb-3">
-        <span class="input-group-text" id="basic-addon1">Número Trocas</span>
-        <input id="numeroTrocasQuick3" type="text" class="form-control" disabled>
-        <span class="input-group-text" id="basic-addon1">Número de Comparações</span>
-        <input id="numeroComparaçõesQuick3" type="text" class="form-control" disabled>
-        <span class="input-group-text" id="basic-addon1">Tempo de execução</span>
-        <input id="tempoExecucaoQuick3" type="text" class="form-control" disabled>
-      </div>
+    <div id="espacoBarras" class="d-flex flex-row bd-highlight mb-3">
     </div>
   </div>
 </body>
